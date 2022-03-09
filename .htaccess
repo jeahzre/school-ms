@@ -1,0 +1,8 @@
+<IfModule mod_rewrite.c>
+  # RewriteBase /
+  # NOT needed unless you're using mod_alias to redirect
+
+  RewriteCond %{REQUEST_URI} !/view
+  RewriteRule ^(.*)$ view/$1 [L]
+  # Direct all requests to /public folder
+</IfModule>

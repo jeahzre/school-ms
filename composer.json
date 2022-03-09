@@ -1,0 +1,14 @@
+{
+    "name": "jess/school-ms",
+    "description": "school management system",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Jess\\SchoolMs\\": "src/"
+        }
+    },
+    "require-dev": {
+        "scssphp/scssphp": "^1.10"
+    }
+}
