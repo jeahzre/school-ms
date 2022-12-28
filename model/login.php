@@ -29,6 +29,7 @@ if (is_post_not_empty(['email', 'passwd'])) {
     header('location: /index.php');
   } else {
     $errorMessage = 'Your email or password is invalid';
-    return $errorMessage;
+    $_SESSION['message'] = $errorMessage;
+    header('location: /view/login.php');
   }
 }

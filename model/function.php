@@ -16,6 +16,24 @@ function is_post_not_empty($variable)
   return true;
 }
 
+function are_files_not_empty($variable)
+{
+  if (is_array($variable)) {
+    foreach ($variable as $var) {
+      if (!isset($_FILES[$var]) || !$_FILES[$var]) {
+        return false;
+      }
+    }
+  } else {
+    if (!isset($_FILES[$variable]) || !$_FILES[$variable]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+
 function setPostKeyValueObjectByKey($keys) {
   $keyValue = array();
   foreach ($keys as $key) {

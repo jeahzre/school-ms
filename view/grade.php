@@ -9,7 +9,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/init/index.php');
   <div class="main-content">
     <div class="card">
       <div class="title">Add Grade</div>
-      <form class="form">
+      <form class="form" method="post" action="/model/grade.php">
         <div class="labels-inputs-vertical">
           <div class="label-input">
             <label for="add_grade">Grade</label>

@@ -9,7 +9,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/init/index.php');
   <div class="main-content">
     <div class="card">
       <div class="title">Add Subject</div>
-      <form class="form">
+      <form class="form" method="POST" action="/model/subject.php">
         <div class="labels-inputs-horizontal">
           <div class="label-input">
             <label for="add_subject_name">Subject</label>
@@ -114,7 +114,7 @@ foreach ($jsFileDependencies as $jsFileDependency) {
 <script>
   let _global_ = {
     item: 'subject',
-    itemIdName: 'id',
+    itemIdName: ['id', 'subject_name'],
     listModelFile: 'subject',
     itemKeysForEdit: ['id', 'subject_name']
   }

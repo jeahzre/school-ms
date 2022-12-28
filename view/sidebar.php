@@ -1,3 +1,10 @@
+<?php
+require_once('Renderer/Profile.php');
+use Renderer\Profile;
+
+$profile = new Profile();
+$profilePicturePath = $profile->getProfilePicturePath();
+?>
 <!-- Left sidebar -->
 <aside id="left-sidebar" class="left-sidebar">
   <header class="my-profile">

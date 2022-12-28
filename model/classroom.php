@@ -39,6 +39,8 @@ foreach ($_POST as $key => $value) {
   if (!empty($_POST[$key])) {
     $classroomQuery = new Classroom();
     $sqlObject = new ExecSql();
+
+    break;
   }
 }
 

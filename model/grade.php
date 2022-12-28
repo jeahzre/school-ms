@@ -66,4 +66,5 @@ if (is_post_not_empty(array('delete_grade'))) {
 
 if (isset($result) && $result) {
   echo json_encode($result);
+  
 }

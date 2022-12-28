@@ -25,6 +25,10 @@ body {
   margin: 0;
 }
 
+input {
+  max-height: 24px;
+}
+
 .main-header {
   width: 100%;
   display: flex;
@@ -134,7 +138,6 @@ main {
 
   .main-title {
     font-size: 30px;
-    padding-left: 35px;
     margin-bottom: 35px;
   }
 

@@ -1,6 +1,9 @@
 <?php
-
 use SQL\ExecSql;
+
+session_start();
+require_once './Session.php';
+use Model\Session;
 
 require_once 'exec_sql.php';
 require_once($_SERVER['DOCUMENT_ROOT'] . '/init/connect_db.php');
@@ -41,7 +44,6 @@ class MyProfile
     global $sqlObject;
 
     [
-      'id' => $id,
       'email' => $email,
       'passwd' => $passwd,
       'name' => $name,
@@ -50,12 +52,21 @@ class MyProfile
       'phone_number' => $phone_number
     ] = $myProfileInputKeyValues;
 
+    $session = new Session();
+    $id = $session->getUserID();
     $usrParamValues = array($email, $passwd, $id);
     $result1 = $sqlObject->execSql($sqls['usr'], 'ssi', $usrParamValues);
 
     $usrOfTypeParamValues = array($name, $initial_name, $gender, $phone_number, $id);
     $result2 = $sqlObject->execSql($sqls['teacher'], 'sssii', $usrOfTypeParamValues);
+
     if ($result1 && $result2) {
+      $currentEmail = $session->getUserCurrentEmail();
+
+      if ($email !== $currentEmail) {
+        $session->setUserCurrentEmail($email);
+      }
+
       return true;
     } else {
       return false;
@@ -76,7 +87,7 @@ if (is_post_not_empty('get_my_profile')) {
   $result =  $sqlObject->execSql($sql, 'i', $paramValues);
 }
 
-$myProfileFields = array('id', 'email', 'passwd', 'name', 'initial_name', 'gender', 'phone_number');
+$myProfileFields = array('email', 'passwd', 'name', 'initial_name', 'gender', 'phone_number');
 
 $formattedEditMyProfileFieldToInputNameMap = formatPostVars('edit_', $myProfileFields);
 

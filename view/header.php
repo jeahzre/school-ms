@@ -4,10 +4,7 @@
   </button>
   <nav class="nav-action">
       <ul class="action-list">
-        <li class="action-item">notif</li>
-        <li class="action-item">friend</li>
-        <li class="action-item">message</li>
-        <li class="action-item">profile</li>
+        <li class="action-item">Notification</li>
         <li class="action-item">
           <button onclick="logout()">logout</button>
         </li>

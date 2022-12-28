@@ -187,10 +187,13 @@ function getListData(formDataAdd) {
     [`get_${_global_["item"]}_list`]: `get_${_global_["item"]}_list`,
     ...formDataAdd,
   };
+
   function handleXMLHttpResponse(parsedData) {
     handleDataUpdate(true, parsedData);
   }
+
   const formData = getFormData(null, null, formDataObject);
+  
   return requestXMLHttp(
     formData,
     _global_["listModelFile"],
@@ -425,7 +428,7 @@ function renderEditedItemRow(beforeEditId, editedClassObject) {
     beforeEditElementId = getBeforeEditElementId();
     rowElementToEdit = document.getElementById(beforeEditElementId);
   }
-  setElementId();
+  // setElementId();
   setRowData();
 }
 
@@ -564,56 +567,75 @@ function setAndRenderListRows(e) {
 
 function searchRowsByIdName(e) {
   const inputValue = e.target.value;
+
   if (inputValue) {
     function processSearchValue(inputValue) {
-      let processedSearchValue = inputValue.trim();
+      let processedSearchValue;
+      const stringifiedInputValue = String(inputValue);
+      processedSearchValue = stringifiedInputValue.trim();
       processedSearchValue = processedSearchValue.toLowerCase();
+
       return processedSearchValue;
     }
+
     const processedSearchValue = processSearchValue(inputValue);
     const entriesTBodyElement = document.getElementById("entries-tbody");
     let chosenDataArr = [];
+
     if (Array.isArray(_global_["itemIdName"])) {
+      // If item has multiple IDs
       const newChosenDataArr = _global_["data"].filter((data) => {
         const eachIdMatch = []; // [true, true, ...]
+
         _global_["itemIdName"].map((itemId) => {
           let eachId;
-          if (_global_["hiddenIdNameKeyValue"][itemId]) {
+
+          if (_global_["hiddenIdNameKeyValue"] && _global_["hiddenIdNameKeyValue"][itemId]) {
             const nameKey = _global_["hiddenIdNameKeyValue"][itemId];
             eachId = data[nameKey];
           } else {
             eachId = data[itemId];
           }
+
           const processedEachId = processSearchValue(eachId);
-          if (processedEachId === processedSearchValue) {
+
+          if (processedEachId.includes(processedSearchValue)) {
             eachIdMatch.push(true);
           } else {
             eachIdMatch.push(false);
           }
         });
+
         const result = eachIdMatch.some((idMatch) => idMatch === true);
+
         return result;
       });
+
       chosenDataArr = newChosenDataArr;
     } else {
       const newChosenDataArr = _global_["data"].filter((data) => {
         const eachId = data[_global_["itemIdName"]];
         const processedEachId = processSearchValue(eachId);
+
         if (processedEachId === processedSearchValue) {
           return true;
         } else {
           return false;
         }
       });
+
       chosenDataArr = newChosenDataArr;
     }
+
     entriesTBodyElement.innerHTML = "";
+
     if (chosenDataArr.length > 0) {
       renderListRows(chosenDataArr);
     } else if (chosenDataArr.length === 0) {
       renderListRows(_global_["data"]);
     }
   } else {
+    // Render all rows
     renderListRows(_global_["data"]);
   }
 }
@@ -740,7 +762,8 @@ function setHiddenInputsValue(action) {
       const referencedElement = document.getElementById(`${action}_${key}`);
       const referencingElement = document.getElementById(`${action}_${value}`);
       const selectedIndex = referencedElement.selectedIndex;
-      const selectedOption = referencedElement[selectedIndex] || referencedElement.value;
+      const selectedOption =
+        referencedElement[selectedIndex] || referencedElement.value;
       referencingElement.value = selectedOption.innerText || selectedOption;
     });
   }
@@ -766,9 +789,9 @@ function getOptions(e, action) {
 }
 
 function handleSelectChange(e) {
-  const modal = e.target.closest('.modal').id;
-  if (modal === 'add-item-modal') {
-    setHiddenInputsValue("add");    
+  const modal = e.target.closest(".modal").id;
+  if (modal === "add-item-modal") {
+    setHiddenInputsValue("add");
   } else {
     setHiddenInputsValue("edit");
   }
@@ -797,7 +820,20 @@ function handleDataUpdate(init, initData) {
   renderNavPageNumberBtns();
 }
 
+function specifyIDOnInput() {
+  const searchInputElement = document.getElementById('search_item_by_id');
+
+  if (Array.isArray(_global_["itemIdName"])) {
+    searchInputElement.placeholder = _global_['itemIdName'].join(', ');
+  } else {
+    searchInputElement.placeholder = _global_["itemIdName"];
+  }
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   // Request data then render it
   getListData();
+
+  // Specify by what user can search item
+  specifyIDOnInput();
 });

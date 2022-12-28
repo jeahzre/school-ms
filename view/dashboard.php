@@ -1,5 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/init/index.php';
+use Model\Session;
+
 class DashboardQuery
 {
   public $totalStudent = "SELECT COUNT(`user_id`) AS total_student FROM `student`";
@@ -83,6 +85,9 @@ $titlesAndFunctionsToRender = array(
   (object)array('imageSrc' => 'teacher', 'title' => 'Total Teacher', 'function' => 'renderTotalTeacher'),
   (object)array('imageSrc' => 'payment-method', 'title' => 'Total Income', 'function' => 'renderTotalIncome'),
 );
+
+$session = new Session();
+$username = $session->getUsername();
 ?>
 
 <!-- Render -->
@@ -90,7 +95,7 @@ $titlesAndFunctionsToRender = array(
 require_once 'top.php';
 ?>
 <main>
-  Hi, <?= $username ?? '' ?> <br>
+  <div class="username">Hi, <?= $username ?? '' ?></div><br>
   <div class="main-title">
     Dashboard
   </div>

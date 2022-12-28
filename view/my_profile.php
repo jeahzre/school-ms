@@ -111,9 +111,19 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/init/index.php');
 
 <!-- Render -->
 <?php
-require_once 'top.php'
+require_once 'top.php';
+
+session_start();
+
+require_once('../model/Session.php');
+
+use Model\Session;
+
+$session = new Session();
+$username = $session->getUsername();
 ?>
 <main>
+  <div class="username">Hi, <?= $username ?? '' ?></div><br>
   <div class="main-title">
     My Profile
   </div>
@@ -128,6 +138,44 @@ require_once 'top.php'
     <table class="detail-table" id="detail-table">
       <!-- renderTableRows(); -->
     </table>
+  </div>
+  <?php
+  require_once('Renderer/Profile.php');
+
+  use Renderer\Profile;
+
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/init/index.php';
+  require_once 'top.php';
+
+  $profile = new Profile();
+  $profilePicturePath = $profile->getProfilePicturePath();
+  $userPosition = $profile->getUserPosition();
+  ?>
+  <style>
+    <?php require_once 'my_profile.scss'; ?>
+  </style>
+  <div class="main-content">
+    <div class="card">
+      <div class="title">
+        Edit Profile
+      </div>
+      <form method="post" action="/model/Profile.php" class="edit-profile-form" enctype="multipart/form-data">
+        <div class="labels-inputs-horizontal">
+          <div class="label-input">
+            <label for="set_profile_picture">Profile picture</label>
+            <div class="image">
+              <img src="<?= $profilePicturePath; ?>" alt="profile-picture" width="200">
+            </div>
+            <input type="file" name="set_profile_picture" id="set_profile_picture" placeholder="Profile picture" class="profile">
+          </div>
+          <div class="label-input user-position">
+            <div>User Position</div>
+            <div><?= $userPosition; ?></div>
+          </div>
+        </div>
+        <button onsubmit="addItem(event)">Submit</button>
+      </form>
+    </div>
   </div>
 </main>
 <div id="overlay"></div>
@@ -225,7 +273,7 @@ require_once 'top.php'
   };
 </script>
 <?php
-$jsFileDependencies = array('ajax', 'modal', 'form', 'frontend');
+$jsFileDependencies = array('ajax', 'modal', 'form', 'frontend', 'function');
 foreach ($jsFileDependencies as $jsFileDependency) {
   echo "<script src='{$jsFileDependency}.js'></script>";
 }
@@ -246,14 +294,13 @@ foreach ($jsFileDependencies as $jsFileDependency) {
     const formDataObject = {
       get_my_profile: 'get_my_profile',
       user_type: 'teacher',
-      user_id: 18
+      user_id: 1
     }
     const formData = getFormData(null, null, formDataObject);
     return requestXMLHttp(formData, 'my_profile', handleXMLHttpResponse, ['parsedData']);
   }
 
   function renderTableRows() {
-
     const detailTableElement = document.getElementById('detail-table');
     detailTableElement.innerHTML = '';
     Object.entries(_global_['data']).map(([key, value]) => {
@@ -331,7 +378,6 @@ foreach ($jsFileDependencies as $jsFileDependency) {
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-        document.body.innerHTML += this.responseText;
         let parsedData = null;
         if (isJSON(this
             .responseText)) {
@@ -358,6 +404,8 @@ foreach ($jsFileDependencies as $jsFileDependency) {
           const editedMyProfileObject = {};
           for (let i = 0; i < elements.length; i++) {
             editedMyProfileObject[elements[i].name] = elements[i].value;
+            const deformattedMyProfileDataName = deformatString('edit_', elements[i].name);
+            _global_['data'][deformattedMyProfileDataName] = elements[i].value;
           }
           renderEditedItemRow(beforeEditIdNameValue, editedMyProfileObject);
           removeSessionStorageItems('before_edit_user_id');

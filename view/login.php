@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once 'plain_top.php';
 ?>
 <body>
@@ -8,6 +9,14 @@ require_once 'plain_top.php';
     </div>
     <div class="main-content">
       <div class="card">
+        <div class="notification">
+          <?php 
+          if (isset($_SESSION['message'])) {
+            echo($_SESSION['message']);
+            unset($_SESSION['message']);
+          }
+          ?>
+        </div>
         <form action="/model/login.php" method="POST" class="form">
           <div class="labels-inputs-vertical">
             <div class="label-input">
