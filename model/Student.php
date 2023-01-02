@@ -6,47 +6,51 @@ require_once 'exec_sql.php';
 require_once($_SERVER['DOCUMENT_ROOT'] . '/init/connect_db.php');
 require_once $_SERVER['DOCUMENT_ROOT'] . '/model/function.php';
 
-class Teacher
+class Student
 {
   function getQuery()
   {
-    return "SELECT `id`, `email`, `passwd`, `name`, `initial_name`, `gender`, `phone_number`, `registration_date` FROM `usr` 
-    INNER JOIN `teacher`
-    ON `usr`.`id` = `teacher`.`user_id`;";
+    return "SELECT * FROM `usr` 
+    INNER JOIN `student`
+    ON `usr`.`id` = `student`.`user_id`;";
   }
 
-  function getAddTeacherQuery()
+  function getAddStudentQuery()
   {
     $sqls = array(
       'usr' => "INSERT INTO `usr` (`email`, `passwd`) VALUES (?, ?)",
       'user_user_type' => "INSERT INTO `user_user_type` (`user_id`, `user_type_id`) VALUES (?, ?)",
-      'teacher' => "INSERT INTO `teacher` (`user_id`, `name`, `initial_name`, `gender`, `phone_number`) VALUES (?, ?, ?, ?, ?)"
+      'student' => "INSERT INTO `student`
+      (`user_id`, `name`, `initial_name`, `gender`, `phone_number`, `guardian_name`, `guardian_phone`, `guardian_email`)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
     );
-
+    
     return $sqls;
   }
 
-  function getEditTeacherQuery()
+  function getEditStudentQuery()
   {
     $sqls = array(
       'usr' => "UPDATE `usr` 
       SET `email` = ?, 
       `passwd` = ?
       WHERE `id` = ?;",
-      'teacher' => "UPDATE `teacher` 
+      'student' => "UPDATE `student` 
       SET `name` = ?,
       `initial_name` = ?,
       `gender` = ?,
-      `phone_number` = ?
+      `phone_number` = ?,
+      `guardian_name` = ?,
+      `guardian_phone` = ?,
+      `guardian_email` = ?
       WHERE `user_id` = ?;"
     );
-
     return $sqls;
   }
 
-  function getDeleteTeacherQuery()
+  function getDeleteStudentQuery()
   {
-    return "DELETE FROM `teacher` WHERE `user_id` = ?";
+    return "DELETE FROM `student` WHERE `user_id` = ?";
   }
 
   function execAddSqls($sqls, $inputKeyValues)
@@ -59,7 +63,10 @@ class Teacher
       'add_gender' => $gender,
       'add_phone_number' => $phone_number,
       'add_email' => $email, 
-      'add_passwd' => $password
+      'add_passwd' => $password,
+      'add_guardian_name' => $add_guardian_name,
+      'add_guardian_phone' => $add_guardian_phone,
+      'add_guardian_email' => $add_guardian_email
     ] = $inputKeyValues;
 
     $usrParamValues = array(
@@ -70,20 +77,23 @@ class Teacher
 
     $userUserTypeParamValues = array(
       $usrResult['insert_id'], 
-      1
+      2
     );
     $userUserTypeResult = $sqlObject->execSql($sqls['user_user_type'], 'ii', $userUserTypeParamValues);
   
-    $teacherParamValues = array(
+    $studentParamValues = array(
       $usrResult['insert_id'],
       $name, 
       $initial_name, 
       $gender, 
-      $phone_number
+      $phone_number,
+      $add_guardian_name,
+      $add_guardian_phone,
+      $add_guardian_email
     );
-    $teacherResult = $sqlObject->execSql($sqls['teacher'], 'isssi', $teacherParamValues);
+    $studentResult = $sqlObject->execSql($sqls['student'], 'isssisis', $studentParamValues);
 
-    if ($usrResult && $userUserTypeResult && $teacherResult) {
+    if ($usrResult && $userUserTypeResult && $studentResult) {
       // return an array of insert_id object
       return $usrResult;
     } else {
@@ -101,7 +111,10 @@ class Teacher
       'edit_gender' => $gender,
       'edit_phone_number' => $phone_number,
       'edit_email' => $email, 
-      'edit_passwd' => $password
+      'edit_passwd' => $password,
+      'edit_guardian_name' => $guardian_name,
+      'edit_guardian_phone' => $guardian_phone,
+      'edit_guardian_email' => $guardian_email,
     ] = $inputKeyValues;
 
     $usrParamValues = array(
@@ -111,16 +124,19 @@ class Teacher
     );
     $usrResult = $sqlObject->execSql($sqls['usr'], 'ssi', $usrParamValues);
   
-    $teacherParamValues = array(
+    $studentParamValues = array(
       $name, 
       $initial_name, 
       $gender, 
-      $phone_number, 
+      $phone_number,
+      $guardian_name,
+      $guardian_phone,
+      $guardian_email,
       $id
     );
-    $teacherResult = $sqlObject->execSql($sqls['teacher'], 'sssii', $teacherParamValues);
+    $studentResult = $sqlObject->execSql($sqls['student'], 'sssisisi', $studentParamValues);
 
-    if ($usrResult && $teacherResult) {
+    if ($usrResult && $studentResult) {
       return true;
     } else {
       return false;
@@ -132,30 +148,30 @@ foreach ($_POST as $key => $value) {
   // Initialize instance of the specified subject if $_POST has at least one value
 
   if (!empty($_POST[$key])) {
-    $teacherQuery = new Teacher();
+    $studentQuery = new Student();
     $sqlObject = new ExecSql();
   }
 }
 
-if (is_post_not_empty('get_teacher_list')) {
-  $sql = $teacherQuery->getQuery();
+if (is_post_not_empty('get_student_list')) {
+  $sql = $studentQuery->getQuery();
   $result = $sqlObject->execSql($sql, null, null);
 }
 
-if (is_post_not_empty($addTeacherKeys = array('add_name', 'add_initial_name', 'add_gender', 'add_phone_number', 'add_email', 'add_passwd'))) {
-  $sqls = $teacherQuery->getAddTeacherQuery();
-  $addPostKeyValueObject = setPostKeyValueObjectByKey($addTeacherKeys);
-  $result = $teacherQuery->execAddSqls($sqls, $addPostKeyValueObject);
+if (is_post_not_empty($addStudentKeys = array('add_name', 'add_initial_name', 'add_gender', 'add_phone_number', 'add_email', 'add_passwd', 'add_guardian_name', 'add_guardian_phone', 'add_guardian_email'))) {
+  $sqls = $studentQuery->getAddStudentQuery();
+  $addPostKeyValueObject = setPostKeyValueObjectByKey($addStudentKeys);
+  $result = $studentQuery->execAddSqls($sqls, $addPostKeyValueObject);
 }
 
-if (is_post_not_empty($editTeacherKeys = array('edit_name', 'edit_initial_name', 'edit_gender', 'edit_phone_number', 'edit_id', 'edit_email', 'edit_passwd'))) {
-  $sqls = $teacherQuery->getEditTeacherQuery();
-  $editPostKeyValueObject = setPostKeyValueObjectByKey($editTeacherKeys);
-  $result = $teacherQuery->execEditSqls($sqls, $editPostKeyValueObject);
+if (is_post_not_empty($editStudentKeys = array('edit_name', 'edit_initial_name', 'edit_gender', 'edit_phone_number', 'edit_id', 'edit_email', 'edit_passwd', 'edit_guardian_name', 'edit_guardian_phone', 'edit_guardian_email'))) {
+  $sqls = $studentQuery->getEditStudentQuery();
+  $editPostKeyValueObject = setPostKeyValueObjectByKey($editStudentKeys);
+  $result = $studentQuery->execEditSqls($sqls, $editPostKeyValueObject);
 }
 
 if (is_post_not_empty(array('delete_id'))) {
-  $sql = $teacherQuery->getDeleteTeacherQuery();
+  $sql = $studentQuery->getDeleteStudentQuery();
   $paramValues = array($_POST['delete_id']);
   $result = $sqlObject->execSql($sql, 'i', $paramValues);
 }

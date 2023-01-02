@@ -38,6 +38,7 @@ $profilePicturePath = $profile->getProfilePicturePath();
     const linkHref = (listItemTitle.replace(/\s/, '_')).toLowerCase();
     const sidebarListElement = document.getElementById('nav-sidebar-list');
     const itemElement = document.createElement('li');
+    
     itemElement.classList.add('list-item');
     itemElement.innerHTML = `
         <a href='/view/${linkHref}.php' class='list-item-link' title='${listItemTitle}'>
@@ -92,7 +93,7 @@ $profilePicturePath = $profile->getProfilePicturePath();
     },
     {
       imageSrc: 'check',
-      listItemTitle: 'Attendance'
+      listItemTitle: 'Student Attendance'
     },
     {
       imageSrc: 'exam',
@@ -100,15 +101,7 @@ $profilePicturePath = $profile->getProfilePicturePath();
     },
     {
       imageSrc: 'cash-flow',
-      listItemTitle: 'Petty Cash'
-    },
-    {
-      imageSrc: 'friends',
-      listItemTitle: 'Friends'
-    },
-    {
-      imageSrc: 'calendar',
-      listItemTitle: 'Event'
+      listItemTitle: 'Cash'
     }
   ];
 

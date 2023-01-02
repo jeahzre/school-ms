@@ -18,7 +18,7 @@ class ExecSql
 
       if (!$autoFillField) {
         $result = $statement->get_result(); // object 
-
+        
         if (is_object($result) && $result->num_rows > 0) {
           while ($row = $result->fetch_assoc()) {
             $rows[] = $row;

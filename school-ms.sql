@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS `student` (
 `guardian_name` VARCHAR(30) NOT NULL, 
 `guardian_phone` INT NOT NULL,
 `guardian_email` VARCHAR(30) NOT NULL,
+`registration_date` DATE NOT NULL DEFAULT (CURDATE()),
 UNIQUE(`user_id`),
 FOREIGN KEY(`user_id`) REFERENCES `usr`(`id`) ON DELETE CASCADE
 );
@@ -208,7 +209,6 @@ CREATE TABLE IF NOT EXISTS `student_payment` (
 `user_id` INT UNSIGNED NOT NULL, 
 `paid` DECIMAL(10, 2) NOT NULL,
 `paid_date` DATETIME NOT NULL DEFAULT (NOW()),
-UNIQUE(`user_id`), 
 FOREIGN KEY(`user_id`) REFERENCES `student`(`user_id`)
 );
 
@@ -247,14 +247,14 @@ FOREIGN KEY(`subject_id`) REFERENCES `subject`(`id`)
 INSERT INTO `exam` (`name`, `subject_id`, `datetime`)
 VALUES ('Anatomy', 1, '2022-02-10 14:00:00');
 
-CREATE TABLE IF NOT EXISTS `event` (
+CREATE TABLE IF NOT EXISTS `plan` (
 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
-`name` VARCHAR(30) NOT NULL,
+`activity_name` VARCHAR(30) NOT NULL,
 `datetime` DATETIME NOT NULL,
-UNIQUE(`name`, `datetime`)
+UNIQUE(`activity_name`, `datetime`)
 );
 
-INSERT INTO `event` (`name`, `datetime`)
+INSERT INTO `plan` (`activity_name`, `datetime`)
 VALUES ('Party 1', '2022-02-12 09:00:00');
 
 CREATE TABLE IF NOT EXISTS `usr_profile_picture` (

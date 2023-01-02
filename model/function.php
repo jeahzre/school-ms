@@ -59,3 +59,18 @@ function deformatKey($format, $keyValueObject) {
   }
   return $deformattedKeyValueObject;
 }
+
+function returnResult($result) {
+  if (isset($result) && $result) {
+    echo json_encode($result);
+  }
+}
+
+function returnGetResult($result, $locationToRedirect) {
+  if (isset($result) && $result) {
+    echo json_encode($result);
+  } else {
+    header($locationToRedirect);
+    exit();
+  }
+}

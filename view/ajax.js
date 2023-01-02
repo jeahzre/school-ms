@@ -4,6 +4,7 @@ function isJSON(str) {
   } catch (e) {
     return false;
   }
+
   return true;
 }
 
@@ -14,9 +15,11 @@ function requestXMLHttp(
   handleXMLHttpResponseArguments
 ) {
   const xmlhttp = new XMLHttpRequest();
+
   xmlhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       let parsedData = null;
+
       if (isJSON(this.responseText)) {
         parsedData = JSON.parse(this.responseText);
       }
@@ -34,6 +37,7 @@ function requestXMLHttp(
       }
     }
   };
+  
   xmlhttp.open("POST", `/model/${serverFileName}.php`);
   xmlhttp.send(formData);
 }
